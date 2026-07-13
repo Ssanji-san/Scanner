@@ -93,6 +93,15 @@ def test_cups_listed_even_when_template_fails():
     assert base["failed"] == ["c1", "c7"]
 
 
+def test_report_drops_junk_confidence_cups():
+    weak = sample_cup()
+    weak.confidence = 0.3
+    evals = [make_eval("WEAK", failed=("c7",), cup=weak),
+             make_eval("STRONG", failed=("c7",), cup=sample_cup())]
+    report = build_report("2026-07-10", evals, previous=None)
+    assert {c["symbol"] for c in report["cups"]} == {"STRONG"}
+
+
 def test_new_cups_flagged_vs_previous():
     previous = {"matches": [], "cups": [{"symbol": "KNOWN"}]}
     evals = [make_eval("KNOWN", failed=("c7",), cup=sample_cup()),

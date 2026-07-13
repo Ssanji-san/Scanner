@@ -33,7 +33,10 @@ class Config:
     min_avg_volume: float = 15_000
     avg_volume_days: int = 30
 
-    # Cups below this confidence never make the alert email (dashboard shows all)
+    # Cups below this confidence are dropped from the report entirely
+    # (keeps latest.json small and the dashboard readable)
+    report_cup_min_confidence: float = 0.5
+    # Cups below this confidence never make the alert email
     email_cup_min_confidence: float = 0.65
     # Each email section lists at most this many rows (rest: "N more on dashboard")
     email_max_rows_per_section: int = 25

@@ -21,7 +21,7 @@ from .rs_rating import rs_ratings, weighted_return
 from .universe import fetch_assets
 
 SPARK_SESSIONS = 260
-SPARK_STEP = 2  # every other session keeps latest.json small
+SPARK_STEP = 5  # ~weekly points keep latest.json small
 
 
 def make_spark(bars):
@@ -69,7 +69,7 @@ def run_scan(out_dir="docs/data", limit=None, cfg=DEFAULT):
         previous = json.loads(latest_path.read_text(encoding="utf-8"))
 
     report = build_report(today.isoformat(), evaluations, previous, cfg)
-    payload = json.dumps(report, indent=1)
+    payload = json.dumps(report, separators=(",", ":"))
     latest_path.write_text(payload, encoding="utf-8")
     (out / f"scan-{today.isoformat()}.json").write_text(payload, encoding="utf-8")
     print(f"matches: {len(report['matches'])}  near misses: {len(report['near_misses'])}  "

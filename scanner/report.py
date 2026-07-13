@@ -47,7 +47,8 @@ def build_report(scan_date, evaluations, previous, cfg: Config = DEFAULT):
             near_misses.append(_entry(ev))
         # Cups get their own list regardless of template status: a stock deep
         # in a base legitimately fails c7 until the right side completes.
-        if ev.get("cup") is not None:
+        cup = ev.get("cup")
+        if cup is not None and cup.confidence >= cfg.report_cup_min_confidence:
             cups.append(_entry(ev))
 
     by_rs = lambda e: -(e["rs"] or 0)
