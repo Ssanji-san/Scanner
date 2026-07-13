@@ -110,6 +110,7 @@ const COLUMNS = {
     { key: "volume", label: "Volume", val: (e) => e.metrics.volume },
     { key: "relvol", label: "RelVol", val: (e) => e.metrics.volume / (e.metrics.vol_ema || 1) },
     { key: "days", label: "Days", val: (e) => e.days_on_list ?? 0 },
+    { key: "tmpl", label: "Template", val: (e) => 9 - e.failed.length },
     { key: "badges", label: "", val: () => 0 },
     { key: "spark", label: "1Y", val: () => 0 },
   ],
@@ -150,7 +151,10 @@ function cellHtml(col, entry, isCupTab) {
     case "conf": return `<td>${Math.round(entry.cup.confidence * 100)}%</td>`;
     case "tmpl": {
       const passed = 9 - entry.failed.length;
-      return `<td class="${passed === 9 ? "pos" : ""}">${passed}/9</td>`;
+      const misses = entry.failed.length
+        ? ` <span class="neg" title="${entry.failed.map((k) => CONDITION_LABELS[k]).join(" · ")}">✗ ${entry.failed.map((k) => k.toUpperCase()).join(",")}</span>`
+        : "";
+      return `<td><span class="${passed === 9 ? "pos" : ""}">${passed}/9</span>${misses}</td>`;
     }
     default: return "<td></td>";
   }
