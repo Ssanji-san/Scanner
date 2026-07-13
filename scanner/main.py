@@ -14,6 +14,7 @@ import pathlib
 from .config import DEFAULT
 from .conditions import evaluate_template
 from .data import fetch_daily_bars, quality_filter
+from .emailer import notify
 from .patterns import detect_cup
 from .report import build_report
 from .rs_rating import rs_ratings, weighted_return
@@ -73,6 +74,7 @@ def run_scan(out_dir="docs/data", limit=None, cfg=DEFAULT):
     (out / f"scan-{today.isoformat()}.json").write_text(payload, encoding="utf-8")
     print(f"matches: {len(report['matches'])}  near misses: {len(report['near_misses'])}  "
           f"new: {report['new']}  dropped: {report['dropped']}")
+    notify(report)
     return report
 
 

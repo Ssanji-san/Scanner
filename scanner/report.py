@@ -56,12 +56,16 @@ def build_report(scan_date, evaluations, previous, cfg: Config = DEFAULT):
     cups.sort(key=lambda e: -(e["cup"]["confidence"] or 0))
 
     prev_days = {}
+    prev_cups = set()
     if previous:
         prev_days = {m["symbol"]: m.get("days_on_list", 1)
                      for m in previous.get("matches", [])}
+        prev_cups = {c["symbol"] for c in previous.get("cups", [])}
     for m in matches:
         m["days_on_list"] = prev_days.get(m["symbol"], 0) + 1
         m["is_new"] = m["symbol"] not in prev_days
+    for c in cups:
+        c["cup_new"] = c["symbol"] not in prev_cups
 
     current_syms = {m["symbol"] for m in matches}
     return {

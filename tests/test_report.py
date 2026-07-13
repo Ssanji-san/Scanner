@@ -93,6 +93,15 @@ def test_cups_listed_even_when_template_fails():
     assert base["failed"] == ["c1", "c7"]
 
 
+def test_new_cups_flagged_vs_previous():
+    previous = {"matches": [], "cups": [{"symbol": "KNOWN"}]}
+    evals = [make_eval("KNOWN", failed=("c7",), cup=sample_cup()),
+             make_eval("FRESH", failed=("c7",), cup=sample_cup())]
+    report = build_report("2026-07-10", evals, previous=previous)
+    flags = {c["symbol"]: c["cup_new"] for c in report["cups"]}
+    assert flags == {"KNOWN": False, "FRESH": True}
+
+
 def test_report_json_serializable_with_cup():
     evals = [make_eval("CUP", cup=sample_cup())]
     report = build_report("2026-07-10", evals, previous=None)
