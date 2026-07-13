@@ -53,23 +53,42 @@ nav#tabs button span { color: var(--muted); font-size: 12px; }
   padding: 8px 12px; border-radius: 8px; width: min(320px, 100%); font: inherit;
 }
 #search:focus { outline: 1px solid var(--cyan); }
-.pricefilter {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--panel); border: 1px solid var(--border);
-  border-radius: 8px; padding: 4px 10px; color: var(--muted); font-size: 13px;
+.pricefilter-wrap { position: relative; display: flex; align-items: center; gap: 8px; }
+#price-btn {
+  background: var(--panel); border: 1px solid var(--border); color: var(--text);
+  padding: 8px 14px; border-radius: 8px; font: inherit; cursor: pointer;
 }
-.pricefilter input {
-  background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
-  padding: 5px 8px; border-radius: 6px; width: 76px; font: inherit;
+#price-btn:hover { background: var(--panel-2); }
+#price-btn .caret { color: var(--muted); font-size: 11px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--panel-2); border: 1px solid var(--cyan);
+  color: var(--text); border-radius: 8px; padding: 6px 10px; font-size: 13px;
 }
-.pricefilter input:focus { outline: 1px solid var(--cyan); }
-.pricefilter .dash { color: var(--muted); }
-.pricefilter button {
+.chip button {
   background: none; border: none; color: var(--muted); cursor: pointer;
-  font-size: 13px; padding: 2px 4px;
+  font-size: 12px; padding: 0 2px;
 }
-.pricefilter button:hover { color: var(--red); }
-.pricefilter.active { border-color: var(--cyan); }
+.chip button:hover { color: var(--red); }
+#price-pop {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 20;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px; width: 240px; box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+}
+#price-pop .pop-title { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+#price-pop .pop-row { display: flex; align-items: center; gap: 8px; }
+#price-pop input {
+  background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+  padding: 6px 8px; border-radius: 6px; width: 88px; font: inherit;
+}
+#price-pop input:focus { outline: 1px solid var(--cyan); }
+#price-pop .dash { color: var(--muted); }
+#price-apply {
+  margin-top: 12px; width: 100%; background: var(--green); color: #04240f;
+  border: none; border-radius: 8px; padding: 7px 0; font: inherit;
+  font-weight: 700; cursor: pointer;
+}
+#price-apply:hover { filter: brightness(1.1); }
 
 .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
 table { border-collapse: collapse; width: 100%; min-width: 900px; }

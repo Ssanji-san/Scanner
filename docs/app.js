@@ -168,10 +168,8 @@ function renderTable(panelId, entries, colSet, isCupTab = false) {
     rows = rows.filter((e) =>
       e.symbol.toLowerCase().includes(query) || (e.name || "").toLowerCase().includes(query));
   }
-  const min = parseFloat($("#price-min").value);
-  const max = parseFloat($("#price-max").value);
-  if (!Number.isNaN(min)) rows = rows.filter((e) => e.price >= min);
-  if (!Number.isNaN(max)) rows = rows.filter((e) => e.price <= max);
+  if (priceFilter.min != null) rows = rows.filter((e) => e.price >= priceFilter.min);
+  if (priceFilter.max != null) rows = rows.filter((e) => e.price <= priceFilter.max);
   const sort = sortState[panelId];
   if (sort) {
     const col = colSet.find((c) => c.key === sort.key);
@@ -250,17 +248,44 @@ document.querySelectorAll("nav#tabs button").forEach((b) =>
   b.addEventListener("click", () => setTab(b.dataset.tab)));
 $("#search").addEventListener("input", render);
 
-function priceFilterChanged() {
-  const active = $("#price-min").value !== "" || $("#price-max").value !== "";
-  document.querySelector(".pricefilter").classList.toggle("active", active);
+const priceFilter = { min: null, max: null };
+
+function applyPriceFilter() {
+  const min = parseFloat($("#price-min").value);
+  const max = parseFloat($("#price-max").value);
+  priceFilter.min = Number.isNaN(min) ? null : min;
+  priceFilter.max = Number.isNaN(max) ? null : max;
+  $("#price-pop").classList.add("hidden");
+
+  const chip = $("#price-chip");
+  if (priceFilter.min == null && priceFilter.max == null) {
+    chip.classList.add("hidden");
+  } else {
+    let text;
+    if (priceFilter.min != null && priceFilter.max != null) text = `Price ${priceFilter.min} – ${priceFilter.max} USD`;
+    else if (priceFilter.min != null) text = `Price > ${priceFilter.min} USD`;
+    else text = `Price < ${priceFilter.max} USD`;
+    $("#price-chip-text").textContent = text;
+    chip.classList.remove("hidden");
+  }
   render();
 }
-$("#price-min").addEventListener("input", priceFilterChanged);
-$("#price-max").addEventListener("input", priceFilterChanged);
+
+$("#price-btn").addEventListener("click", (ev) => {
+  ev.stopPropagation();
+  $("#price-pop").classList.toggle("hidden");
+  if (!$("#price-pop").classList.contains("hidden")) $("#price-min").focus();
+});
+$("#price-apply").addEventListener("click", applyPriceFilter);
+$("#price-pop").addEventListener("keydown", (ev) => {
+  if (ev.key === "Enter") applyPriceFilter();
+});
+$("#price-pop").addEventListener("click", (ev) => ev.stopPropagation());
+document.addEventListener("click", () => $("#price-pop").classList.add("hidden"));
 $("#price-clear").addEventListener("click", () => {
   $("#price-min").value = "";
   $("#price-max").value = "";
-  priceFilterChanged();
+  applyPriceFilter();
 });
 
 init();

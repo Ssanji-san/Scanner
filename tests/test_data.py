@@ -38,13 +38,14 @@ def test_parse_bars_empty():
 
 
 def test_quality_filter():
-    cfg = Config()  # min price 5, min avg volume 300k
+    cfg = Config()  # min price 1 (user wants everything from $1), min avg volume 300k
     bars = {
         "GOOD": make_bars(np.full(300, 25.0), volumes=np.full(300, 500_000.0)),
         "CHEAP": make_bars(np.full(300, 2.0), volumes=np.full(300, 500_000.0)),
+        "PENNY": make_bars(np.full(300, 0.40), volumes=np.full(300, 500_000.0)),
         "THIN": make_bars(np.full(300, 25.0), volumes=np.full(300, 100_000.0)),
     }
-    assert quality_filter(bars, cfg) == ["GOOD"]
+    assert quality_filter(bars, cfg) == ["CHEAP", "GOOD"]
 
 
 def test_filter_assets_excludes_junk():

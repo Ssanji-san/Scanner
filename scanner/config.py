@@ -26,8 +26,8 @@ class Config:
     # RS rating: IBD-style weighted 12-month return
     rs_weights: dict = field(default_factory=lambda: {63: 0.4, 126: 0.2, 189: 0.2, 252: 0.2})
 
-    # Universe quality filter
-    min_price: float = 5.0
+    # Universe quality filter (user wants the low-priced names too — $1 floor)
+    min_price: float = 1.0
     min_avg_volume: float = 300_000
     avg_volume_days: int = 30
 

@@ -30,13 +30,21 @@
 
 <div class="controls">
   <input id="search" type="search" placeholder="Filter symbol or name…">
-  <div class="pricefilter">
-    <span>Price</span>
-    <input id="price-min" type="number" min="0" step="0.5" placeholder="From">
-    <span class="dash">–</span>
-    <input id="price-max" type="number" min="0" step="0.5" placeholder="To">
-    <span>USD</span>
-    <button id="price-clear" title="Clear price filter">✕</button>
+  <div class="pricefilter-wrap">
+    <button id="price-btn">Price <span class="caret">▾</span></button>
+    <span id="price-chip" class="chip hidden">
+      <span id="price-chip-text"></span>
+      <button id="price-clear" title="Clear price filter">✕</button>
+    </span>
+    <div id="price-pop" class="hidden">
+      <div class="pop-title">Price range (USD)</div>
+      <div class="pop-row">
+        <input id="price-min" type="number" min="0" step="0.5" placeholder="From">
+        <span class="dash">–</span>
+        <input id="price-max" type="number" min="0" step="0.5" placeholder="To">
+      </div>
+      <button id="price-apply">Apply</button>
+    </div>
   </div>
 </div>
 
