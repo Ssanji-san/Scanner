@@ -38,12 +38,14 @@ def test_parse_bars_empty():
 
 
 def test_quality_filter():
-    cfg = Config()  # min price 1 (user wants everything from $1), min avg volume 300k
+    # min price $1; volume floor is calibrated to IEX-reported volume, which
+    # is a small fraction of consolidated volume (15k IEX ~ a few hundred k real)
+    cfg = Config()
     bars = {
-        "GOOD": make_bars(np.full(300, 25.0), volumes=np.full(300, 500_000.0)),
-        "CHEAP": make_bars(np.full(300, 2.0), volumes=np.full(300, 500_000.0)),
-        "PENNY": make_bars(np.full(300, 0.40), volumes=np.full(300, 500_000.0)),
-        "THIN": make_bars(np.full(300, 25.0), volumes=np.full(300, 100_000.0)),
+        "GOOD": make_bars(np.full(300, 25.0), volumes=np.full(300, 40_000.0)),
+        "CHEAP": make_bars(np.full(300, 2.0), volumes=np.full(300, 40_000.0)),
+        "PENNY": make_bars(np.full(300, 0.40), volumes=np.full(300, 40_000.0)),
+        "THIN": make_bars(np.full(300, 25.0), volumes=np.full(300, 4_000.0)),
     }
     assert quality_filter(bars, cfg) == ["CHEAP", "GOOD"]
 

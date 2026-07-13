@@ -20,11 +20,11 @@ def report_fixture(new=("FRESH",), dropped=("GONE",), cups=()):
     }
 
 
-def cup_fixture(symbol="CUPY", state="forming", new=True):
+def cup_fixture(symbol="CUPY", state="forming", new=True, confidence=0.8):
     return {"symbol": symbol, "name": f"{symbol} Corp", "price": 18.5, "rs": 90,
             "cup_new": new, "failed": ["c7"],
             "cup": {"zone": "mid_cheat", "state": state, "pivot": 19.25,
-                    "confidence": 0.8, "depth": 0.24}}
+                    "confidence": confidence, "depth": 0.24}}
 
 
 def test_sends_when_new_matches():
@@ -57,6 +57,28 @@ def test_email_content():
     assert "BRKO" in body and "BREAKOUT" in body.upper()
     assert "https://example.github.io/scan/" in body
     assert "not financial advice" in body.lower()
+
+
+def test_low_confidence_cups_stay_off_the_email():
+    low = cup_fixture("JUNK", confidence=0.3)
+    high = cup_fixture("SOLID", confidence=0.85)
+    report = report_fixture(new=(), dropped=(), cups=(low, high))
+    assert should_send(report) is True
+    subject, body = build_email(report, dashboard_url="x")
+    assert "SOLID" in body
+    assert "JUNK" not in body
+    assert "1 new cup setup" in subject  # only the confident one counted
+
+    only_junk = report_fixture(new=(), dropped=(), cups=(low,))
+    assert should_send(only_junk) is False  # junk alone never triggers an email
+
+
+def test_email_sections_are_capped():
+    many = tuple(cup_fixture(f"C{i:03d}", confidence=0.9) for i in range(30))
+    report = report_fixture(new=(), dropped=(), cups=many)
+    _, body = build_email(report, dashboard_url="x")
+    assert body.count("pivot $") == 25
+    assert "and 5 more on the dashboard" in body
 
 
 def test_email_subject_counts():

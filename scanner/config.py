@@ -26,10 +26,17 @@ class Config:
     # RS rating: IBD-style weighted 12-month return
     rs_weights: dict = field(default_factory=lambda: {63: 0.4, 126: 0.2, 189: 0.2, 252: 0.2})
 
-    # Universe quality filter (user wants the low-priced names too — $1 floor)
+    # Universe quality filter (user wants the low-priced names too — $1 floor).
+    # Volume floor is against Alpaca's free IEX feed, which reports only a few
+    # percent of consolidated volume: 15k IEX shares ~ several hundred k real.
     min_price: float = 1.0
-    min_avg_volume: float = 300_000
+    min_avg_volume: float = 15_000
     avg_volume_days: int = 30
+
+    # Cups below this confidence never make the alert email (dashboard shows all)
+    email_cup_min_confidence: float = 0.65
+    # Each email section lists at most this many rows (rest: "N more on dashboard")
+    email_max_rows_per_section: int = 25
 
     # Near-miss tab: passing all but this many conditions
     near_miss_max_failures: int = 1

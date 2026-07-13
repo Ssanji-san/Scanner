@@ -7,15 +7,22 @@ import os
 import smtplib
 from email.message import EmailMessage
 
+from .config import DEFAULT
+
 ZONE_LABELS = {"low_cheat": "Low Cheat", "mid_cheat": "Mid Cheat", "cheat": "Cheat"}
 
 
+def _confident(report):
+    floor = DEFAULT.email_cup_min_confidence
+    return [c for c in report.get("cups", []) if c["cup"]["confidence"] >= floor]
+
+
 def _new_cups(report):
-    return [c for c in report.get("cups", []) if c.get("cup_new")]
+    return [c for c in _confident(report) if c.get("cup_new")]
 
 
 def _breakouts(report):
-    return [c for c in report.get("cups", []) if c["cup"]["state"] == "triggered"]
+    return [c for c in _confident(report) if c["cup"]["state"] == "triggered"]
 
 
 def should_send(report) -> bool:
@@ -37,31 +44,47 @@ def build_email(report, dashboard_url):
 
     lines = [f"Scan of {report['universe_size']:,} stocks on {report['scan_date']}", ""]
 
+    cap = DEFAULT.email_max_rows_per_section
+
+    def capped(items):
+        overflow = len(items) - cap
+        return items[:cap], (f"  ... and {overflow} more on the dashboard"
+                             if overflow > 0 else None)
+
     by_symbol = {m["symbol"]: m for m in report["matches"]}
     if report["new"]:
+        shown, more = capped(report["new"])
         lines.append("NEW MATCHES (pass all 9 conditions):")
-        for sym in report["new"]:
+        for sym in shown:
             m = by_symbol.get(sym, {})
             pct_high = (m.get("metrics", {}).get("pct_from_high") or 0) * 100
             lines.append(f"  {sym:<6} {m.get('name', ''):<30} ${m.get('price', 0):<8.2f} "
                          f"RS {m.get('rs', '?'):<3} {pct_high:+.1f}% vs 52w high")
+        if more:
+            lines.append(more)
         lines.append("")
 
     if breakouts:
+        shown, more = capped(breakouts)
         lines.append("CUP BREAKOUTS (pivot broken today):")
-        for c in breakouts:
+        for c in shown:
             lines.append(f"  {c['symbol']:<6} {ZONE_LABELS[c['cup']['zone']]:<10} "
                          f"pivot ${c['cup']['pivot']:.2f} "
                          f"confidence {round(c['cup']['confidence'] * 100)}%")
+        if more:
+            lines.append(more)
         lines.append("")
 
     if new_cups:
+        shown, more = capped(new_cups)
         lines.append("NEW CUP SETUPS (forming, watch the pivot):")
-        for c in new_cups:
+        for c in shown:
             lines.append(f"  {c['symbol']:<6} {ZONE_LABELS[c['cup']['zone']]:<10} "
                          f"pivot ${c['cup']['pivot']:.2f} "
                          f"depth {round(c['cup']['depth'] * 100)}% "
                          f"confidence {round(c['cup']['confidence'] * 100)}%")
+        if more:
+            lines.append(more)
         lines.append("")
 
     if report["dropped"]:
