@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minervini Trend Template Scanner</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>📈</text></svg>">
+</head>
+<body>
+<header>
+  <div class="title-row">
+    <h1>📈 Trend Template Scanner</h1>
+    <span id="demo-badge" class="badge demo hidden">DEMO DATA</span>
+  </div>
+  <div class="meta-row">
+    <span id="scan-date"></span>
+    <span id="universe"></span>
+    <span id="diff"></span>
+  </div>
+  <p class="disclaimer">Screens for Minervini's 8 Trend Template conditions + a volume clause.
+  Candidates, not buy signals — cup detection is heuristic; always check the chart. Not financial advice.</p>
+</header>
+
+<nav id="tabs">
+  <button data-tab="matches" class="active">Matches <span id="count-matches"></span></button>
+  <button data-tab="near">Near Misses <span id="count-near"></span></button>
+  <button data-tab="cups">Cup Setups <span id="count-cups"></span></button>
+</nav>
+
+<div class="controls">
+  <input id="search" type="search" placeholder="Filter symbol or name…">
+</div>
+
+<main>
+  <div id="panel-matches" class="panel"></div>
+  <div id="panel-near" class="panel hidden"></div>
+  <div id="panel-cups" class="panel hidden"></div>
+</main>
+
+<footer>
+  <span id="footer-note"></span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
