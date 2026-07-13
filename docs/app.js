@@ -168,6 +168,10 @@ function renderTable(panelId, entries, colSet, isCupTab = false) {
     rows = rows.filter((e) =>
       e.symbol.toLowerCase().includes(query) || (e.name || "").toLowerCase().includes(query));
   }
+  const min = parseFloat($("#price-min").value);
+  const max = parseFloat($("#price-max").value);
+  if (!Number.isNaN(min)) rows = rows.filter((e) => e.price >= min);
+  if (!Number.isNaN(max)) rows = rows.filter((e) => e.price <= max);
   const sort = sortState[panelId];
   if (sort) {
     const col = colSet.find((c) => c.key === sort.key);
@@ -245,5 +249,18 @@ async function init() {
 document.querySelectorAll("nav#tabs button").forEach((b) =>
   b.addEventListener("click", () => setTab(b.dataset.tab)));
 $("#search").addEventListener("input", render);
+
+function priceFilterChanged() {
+  const active = $("#price-min").value !== "" || $("#price-max").value !== "";
+  document.querySelector(".pricefilter").classList.toggle("active", active);
+  render();
+}
+$("#price-min").addEventListener("input", priceFilterChanged);
+$("#price-max").addEventListener("input", priceFilterChanged);
+$("#price-clear").addEventListener("click", () => {
+  $("#price-min").value = "";
+  $("#price-max").value = "";
+  priceFilterChanged();
+});
 
 init();

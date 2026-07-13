@@ -47,12 +47,29 @@ nav#tabs button {
 nav#tabs button.active { color: var(--text); border-bottom-color: var(--green); }
 nav#tabs button span { color: var(--muted); font-size: 12px; }
 
-.controls { margin: 14px 0; }
+.controls { margin: 14px 0; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 #search {
   background: var(--panel); border: 1px solid var(--border); color: var(--text);
   padding: 8px 12px; border-radius: 8px; width: min(320px, 100%); font: inherit;
 }
 #search:focus { outline: 1px solid var(--cyan); }
+.pricefilter {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 8px; padding: 4px 10px; color: var(--muted); font-size: 13px;
+}
+.pricefilter input {
+  background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+  padding: 5px 8px; border-radius: 6px; width: 76px; font: inherit;
+}
+.pricefilter input:focus { outline: 1px solid var(--cyan); }
+.pricefilter .dash { color: var(--muted); }
+.pricefilter button {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: 13px; padding: 2px 4px;
+}
+.pricefilter button:hover { color: var(--red); }
+.pricefilter.active { border-color: var(--cyan); }
 
 .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
 table { border-collapse: collapse; width: 100%; min-width: 900px; }
